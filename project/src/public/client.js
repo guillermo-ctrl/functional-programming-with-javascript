@@ -1,5 +1,5 @@
 let store = {
-    user: { name: "Student" },
+    user: { name: "Moongoat" },
     apod: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
 }
@@ -50,7 +50,8 @@ window.addEventListener('load', () => {
 
 // ------------------------------------------------------  COMPONENTS
 
-// Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
+// Pure function that renders conditional information -- 
+// THIS IS JUST AN EXAMPLE, you can delete it.
 const Greeting = (name) => {
     if (name) {
         return `
