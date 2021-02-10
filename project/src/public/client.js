@@ -4,6 +4,17 @@ let store = {
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
 }
 
+// Example API call
+const getImageOfTheDay = (state) => {
+    let { apod } = state
+
+    fetch(`http://localhost:3000/apod`)
+        .then(res => res.json())
+        .then(apod => updateStore(store, { apod }))
+
+    return this.data
+}
+
 // add our markup to the page
 const root = document.getElementById('root')
 
@@ -69,6 +80,7 @@ const ImageOfTheDay = (apod) => {
 
     // If image does not already exist, or it is not from today -- request it again
     const today = new Date()
+    console.log(apod.date)
     const photodate = new Date(apod.date)
     console.log(photodate.getDate(), today.getDate());
 
@@ -94,13 +106,4 @@ const ImageOfTheDay = (apod) => {
 
 // ------------------------------------------------------  API CALLS
 
-// Example API call
-const getImageOfTheDay = (state) => {
-    let { apod } = state
 
-    fetch(`http://localhost:3000/apod`)
-        .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
-
-    return data
-}
