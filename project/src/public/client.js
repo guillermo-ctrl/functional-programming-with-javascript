@@ -45,29 +45,32 @@ const render = async (root, state) => {
 
 }
 
-// Pure function that returns conditional information as html modules 
+// Pure function that returns conditional information in the form of html modules 
 const RoverInfo = (rover) => {
-
     const today = new Date()
     //Request images again if new ones exist
     if (!rover || rover.date === today.getDate() ) {
         getRovers(store)
     }
-    //the rest of the function is wrapped inside an if statement to check if the "apod"
-    // key is already in place. This is done to avoid console error messages
-    if (store.rover) {
-        if (roverChoice.value == "Curiosity") {return (`
-            <p>${store.rover.image.rovers[0].name}</p>
-        `)}
-        else if (roverChoice.value == "Opportunity") {return (`
-        <p>${store.rover.image.rovers[2].name}</p>
-        `)}
-        else if (roverChoice.value == "Spirit") {return (`
-        <p>${store.rover.image.rovers[1].name}</p>
-        `)}
-        else {return (`
-        <p></p>
-        `)}
+    //the rest of the function is wrapped inside an if statement to check if the "rover"
+    // key is already in place. If not, the message "loading" will show on the screen
+    if (store.rover) { // <= check if store.rover exists
+        const roverNum = () => { // <= this function returns a number depending on the current rover
+            switch (store.currentRover) {
+                case "Opportunity": return 2
+                case "Curiosity": return 0
+                case "Spirit": return 1
+            }
+            return 0
+        }
+        //if store rover exists, then RoverInfo returns the following html
+        return (`
+            <p>Name: ${store.rover.image.rovers[roverNum()].name}</p>
+            <p>Launch date: ${store.rover.image.rovers[roverNum()].launch_date}</p>
+            <p>Landing date: ${store.rover.image.rovers[roverNum()].landing_date}</p>
+            <p>Status: ${store.rover.image.rovers[roverNum()].status}</p>
+        `)
+    //otherwise, "loading" shows up   
     } else {
         return (`
             <p>Loading</p>
