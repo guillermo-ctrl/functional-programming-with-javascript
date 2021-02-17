@@ -1,28 +1,32 @@
 // store object that can only be modified using updateStore
 let store = {
-    user: '',
-    apod: '', //THIS IS WHERE WE LEFT: WE NEED TO MAKE THE APOD BE UPDATED FIRST 
-    //IN THE EVENTLISTENER ABOVE
-    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
+    currentRover: ``,
 }
 
+//this puts the api info inside the store. Gets called when window is loaded
+const getRovers = (state) => {
 
-// Example API call
-const getImageOfTheDay = (state) => {
+    let { rover } = state
 
-    let { apod } = state
-
-    fetch(`http://localhost:3000/apod`)
+    fetch(`http://localhost:3000/all`)
         .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
+        .then(rover => updateStore(store, { rover }))
 
     
     return this.data
 }
 
 // listening for load event because page should load before any JS is called
-window.addEventListener('load', () => {
-    render(root, store)
+//once the page is loaded, the render function is called
+window.addEventListener('load', function() {
+    render(root, store)  
+    root.addEventListener('click', function() {
+        
+        roverChoice.addEventListener('change', function() {
+            updateStore(store, {currentRover: roverChoice.value})
+            })
+    });
+    getRovers(store)
 })
 
 // this HOF is used to update the store object
@@ -35,89 +39,59 @@ const updateStore = (store, newState) => {
 // root is where content goes in the html
 const root = document.getElementById('root')
 
-// render defines the innerhtml of root
+// render sets App as the innerhtml of root
 const render = async (root, state) => {
     root.innerHTML = App(state)
+
 }
 
-// Pure function that renders infomation requested from the API call
-const ImageOfTheDay = (apod) => {
+// Pure function that returns conditional information as html modules 
+const RoverInfo = (rover) => {
+
     const today = new Date()
-
-    //If image does not already exist, or it is not from today -- request it again
-    if (!apod || apod.date === today.getDate() ) {
-        getImageOfTheDay(store)
+    //Request images again if new ones exist
+    if (!rover || rover.date === today.getDate() ) {
+        getRovers(store)
     }
-
     //the rest of the function is wrapped inside an if statement to check if the "apod"
     // key is already in place. This is done to avoid console error messages
-    if (apod) {
-    
-    // check if the photo of the day is actually type video!
-    
-    if (store.apod.image.media_type === "video") {
-        return (`
-            <p>See today's featured video <a href="${store.apod.image.url}">here</a></p>
-            <p>${store.apod.image.title}</p>
-            <p>${store.apod.image.explanation}</p>
-        `)
+    if (store.rover) {
+        if (roverChoice.value == "Curiosity") {return (`
+            <p>${store.rover.image.rovers[0].name}</p>
+        `)}
+        else if (roverChoice.value == "Opportunity") {return (`
+        <p>${store.rover.image.rovers[2].name}</p>
+        `)}
+        else if (roverChoice.value == "Spirit") {return (`
+        <p>${store.rover.image.rovers[1].name}</p>
+        `)}
+        else {return (`
+        <p></p>
+        `)}
     } else {
-        
         return (`
-            <img src="${apod.image.url}" height="350px" width="100%" />
-            <p>${apod.image.explanation}</p>
-            
+            <p>Loading</p>
         `
-        
         )
     }}
-    else {
-        return `
-                <p>Loading</p>
-    `
-    } 
-}
-
+    
 // create content
 const App = (state) => {
-    let { rovers, apod } = state
-
+    let { rover } = state //rover is the rover object in store
     return `
-        <header></header>
+        <header></header> 
         <main>
-            ${Greeting(store.user.name)}
+            <h1>Mars Rover Dashboard</h1>
             <section>
-                <h3>Put things on the page!</h3>
-                <p>Here is an example section.</p>
-                <p>
-                    One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
-                    the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
-                    This endpoint structures the APOD imagery and associated metadata so that it can be repurposed for other
-                    applications. In addition, if the concept_tags parameter is set to True, then keywords derived from the image
-                    explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
-                    but generally help with discoverability of relevant imagery.
-                </p>
-                ${ImageOfTheDay(apod)}
+                <select id="roverChoice">
+                <option>Choose a rover</option>
+                <option>Curiosity</option>
+                <option>Opportunity</option>
+                <option>Spirit</option>
+                </select>
+                ${RoverInfo(store.rover)}
             </section>
         </main>
         <footer></footer>
     `
 }
-
-// ------------------------------------------------------  COMPONENTS
-
-// Pure function that renders conditional information -- 
-// THIS IS JUST AN EXAMPLE, you can delete it.
-const Greeting = (name) => {
-    if (name) {
-        return `
-            <h1>Welcome, ${name}!</h1>
-        `
-    }
-
-    return `
-        <h1>Hello!</h1>
-    `
-}
-
-//MODIFY APOD IN STORE USING THE HOF
