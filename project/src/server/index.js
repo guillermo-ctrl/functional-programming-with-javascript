@@ -28,7 +28,7 @@ app.use('/', express.static(path.join(__dirname, '../public')))
 app.get('/all', async (req, res) => {
     // Prepare output in JSON format
     try {
-        let image = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers?api_key=L5QPoo2SUQjJxbbbcKfp4WgO8q4TcRhn0L6CnMJe`)
+        let image = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers?api_key=${process.env.API_KEY}`)
             .then(res => res.json())
         res.send({image})
     } catch (err) {
