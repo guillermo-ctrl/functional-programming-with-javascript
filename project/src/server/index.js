@@ -11,7 +11,7 @@ const port = 3000
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-//This determins what happens in root. It gives access to elements in "public" folder
+//This determines what happens in root. It gives access to elements in "public" folder
 app.use('/', express.static(path.join(__dirname, '../public')))
 
 // all rovers general information API call 
@@ -76,3 +76,5 @@ app.get('/opportunitypictures', async (req, res) => {
 
 // the following is the listener to start the server
 app.listen(port, () => console.log(`Rover dashboard listening on port ${port}!`))
+
+
