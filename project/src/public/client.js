@@ -1,25 +1,14 @@
 // store object that can only be modified using updateStore
-let store = {
-    currentRover: `Curiosity`,
+let store = { 
 }
 
-//this puts the general rover api info inside the store. Gets called when window is loaded
-const getRovers = (state) => {
-
-    let { rover } = state
-
-    fetch(`http://localhost:3000/all`)
-        .then(res => res.json())
-        .then(rover => updateStore(store, { rover }))
-
-    
-    return this.data
-}
-
+//this function grabs the image data for the current chosen rover. Gets called when user submits a rover choice
 const getImage = (state) => {
-    if (store.currentRover === "Choose a rover") {
-        return ("asd")
+    //if no rover has been chosen yet, function stops
+    if (!store.currentRover) {
+        return 
     }
+    //else, it will return the image data and put it in the store
     let { image } = state
     fetch(`http://localhost:3000/${store.currentRover}pictures`) //THIS NEEEDS WORK: WHEN "CHOOSE ROVER" THROWS ERROR
         .then(res => res.json())
@@ -27,21 +16,18 @@ const getImage = (state) => {
     return this.data
 }
 
-
-
 // listening for load event because page should load before any JS is called
-//once the page is loaded, the render function is called
 window.addEventListener('load', function() {
+    //once the page is loaded, the render function is called
     render(root, store)  
+   //and an event listener for the submit button is created
     root.addEventListener('click', function() {
-        
-        roverChoice.addEventListener('change', function() {
+        submit.addEventListener("click", function(){
             updateStore(store, {currentRover: roverChoice.value})
             getImage(store)
-            
             })
-    });
-    getRovers(store)
+     });
+    
 })
 
 // this HOF is used to update the store object
@@ -60,75 +46,43 @@ const render = async (root, state) => {
 
 }
 
-// Pure functions that returns conditional information in the form of html modules 
+// Pure function that returns conditional information in the form of an html module 
 const RoverInfo = () => {
-    //the function starts with an if statement to check if the "rover"
-    // key is already in place. If not, the message "loading" will show on the screen
-    if (store.rover) {
-        const roverNum = () => { // <= this function returns a number depending on the current rover
-            switch (store.currentRover) {
-                case "Opportunity": return 2;
-                case "Curiosity": return 0;
-                case "Spirit": return 1;
-            }
-            return 0
-        }
-        
+    
+    //the function starts with an if statement to check if an image is already in place
+    if (!store.image) {
         return (`
-            <p>Name: ${store.rover.info.rovers[roverNum()].name}</p>
-            <p>Launch date: ${store.rover.info.rovers[roverNum()].launch_date}</p>
-            <p>Landing date: ${store.rover.info.rovers[roverNum()].landing_date}</p>
-            <p>Mission status: ${store.rover.info.rovers[roverNum()].status}</p>
-            <p>Date of latest pictures taken: ${store.rover.info.rovers[roverNum()].max_date}</p>
-            
+            <p></p>
         `)
-    //otherwise, "loading" shows up   
-        } else {
-        return (`
-            <p>Loading</p>
-        `
-        )
-        }
-    }
-
-const roverPic = () => { 
-    if (store.image){
-        return (`
-        <img src="${store.image.image.photos[0].img_src}" height="350px" width="100%" />
-    `)
     }
     return (`
-        <p></p>
+        <p>Name: ${store.image.image.photos[0].rover.name}</p>
+        <p>Launch date: ${store.image.image.photos[0].rover.launch_date}</p>
+        <p>Landing date: ${store.image.image.photos[0].rover.landing_date}</p>
+        <p>Mission status: ${store.image.image.photos[0].rover.status}</p>
+        <p>Date of latest pictures taken: ${store.image.image.photos[0].earth_date}</p>
+        <img src="${store.image.image.photos[0].img_src}" height="350px" width="100%" />
+        
     `)
-}
+    }
 
 // create content
-const App = (state) => {
-    let { rover } = state //rover is the rover object in store
+const App = () => {
+
     return `
         <header></header> 
         <main>
             <h1>Mars Rover Dashboard</h1>
             <p>Choose a rover</p>
-            <section>
                 <select id="roverChoice">
-                <option>Choose a rover</option>
+                <option disabled selected value> -- Choose a rover -- </option>
                 <option>Curiosity</option>
                 <option>Opportunity</option>
                 <option>Spirit</option>
+                <input id="submit" type="submit" value="Get information">
                 </select>
-            </section>
             ${RoverInfo()}
-            ${roverPic()} 
         </main>
         <footer></footer>
     `
 }
-
-//make it better:
-//make the whole thing run just when "submit" button clicked
-//"all" api not needed, just get the general information from image info api
-
-//known issue: 
-//curiosity picture not appearing when the site first loads
-//"choose a rover" option in dropdown great inefficiency, much code written to get around this problem

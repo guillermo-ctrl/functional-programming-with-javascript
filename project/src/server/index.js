@@ -11,20 +11,8 @@ const port = 3000
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-//This determines what happens in root. It gives access to elements in "public" folder
+//This determines what happens in the homepage. It gives access to elements in "public" folder
 app.use('/', express.static(path.join(__dirname, '../public')))
-
-// all rovers general information API call 
-app.get('/all', async (req, res) => {
-    // Prepare output in JSON format
-    try {
-        let info = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers?api_key=${process.env.API_KEY}`)
-            .then(res => res.json())
-        res.send({info})
-    } catch (err) {
-        console.log('error:', err);
-    }
-})
 
 // curiosity latest pictures API call 
 app.get('/curiositypictures', async (req, res) => {
