@@ -60,8 +60,8 @@ const RoverInfo = () => {
         <p>Launch date: ${store.image.image.photos[0].rover.launch_date}</p>
         <p>Landing date: ${store.image.image.photos[0].rover.landing_date}</p>
         <p>Mission status: ${store.image.image.photos[0].rover.status}</p>
-        <p>Date of latest pictures taken: ${store.image.image.photos[0].earth_date}</p>
-        <img src="${store.image.image.photos[0].img_src}" height="350px" width="100%" />
+        <p>Latest picture taken with the ${store.image.image.photos[0].camera.full_name}. Date: ${store.image.image.photos[0].earth_date}</p>
+        <img src="${store.image.image.photos[0].img_src}" max-width:100%; height:auto />
         
     `)
     }
