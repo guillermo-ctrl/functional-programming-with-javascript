@@ -9,8 +9,8 @@ const getImage = (state) => {
         return 
     }
     //else, it will return the image data and put it in the store
-    let { image } = state
-    fetch(`http://localhost:3000/${store.currentRover}pictures`) //THIS NEEEDS WORK: WHEN "CHOOSE ROVER" THROWS ERROR
+    const { image } = state
+    fetch(`http://localhost:3000/${store.currentRover}pictures`)
         .then(res => res.json())
         .then(image => updateStore(store, { image }))
     return this.data
@@ -22,7 +22,7 @@ window.addEventListener('load', function() {
     render(root, store)  
    //and an event listener for the submit button is created
     root.addEventListener('click', function() {
-        submit.addEventListener("click", function(){
+        submit.addEventListener('click', function(){
             updateStore(store, {currentRover: roverChoice.value})
             getImage(store)
             })
@@ -32,7 +32,6 @@ window.addEventListener('load', function() {
 
 // this HOF is used to update the store object
 const updateStore = (store, newState) => {
- 
     store = Object.assign(store, newState)
     render(root, store)
 }
@@ -48,7 +47,6 @@ const render = async (root, state) => {
 
 // Pure function that returns conditional information in the form of an html module 
 const RoverInfo = () => {
-    
     //the function starts with an if statement to check if an image is already in place
     if (!store.image) {
         return (`
@@ -61,28 +59,28 @@ const RoverInfo = () => {
         <p>Landing date: ${store.image.image.photos[0].rover.landing_date}</p>
         <p>Mission status: ${store.image.image.photos[0].rover.status}</p>
         <p>Latest picture taken with the ${store.image.image.photos[0].camera.full_name}. Date: ${store.image.image.photos[0].earth_date}</p>
-        <img src="${store.image.image.photos[0].img_src}" max-width:100%; height:auto />
+        <img src='${store.image.image.photos[0].img_src}' max-width:100%; height:auto />
         
     `)
-    }
+}
 
 // create content
 const App = () => {
 
-    return `
+    return (`
         <header></header> 
         <main>
             <h1>Mars Rover Dashboard</h1>
             <p>Choose a rover</p>
-                <select id="roverChoice">
+                <select id='roverChoice'>
                 <option disabled selected value> -- Choose a rover -- </option>
                 <option>Curiosity</option>
                 <option>Opportunity</option>
                 <option>Spirit</option>
-                <input id="submit" type="submit" value="Get information">
+                <input id='submit' type='submit' value='Get information'>
                 </select>
             ${RoverInfo()}
         </main>
         <footer></footer>
-    `
+    `)
 }

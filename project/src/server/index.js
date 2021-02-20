@@ -1,5 +1,7 @@
 //required stuff to run server
 require('dotenv').config()
+const Immutable = require('immutable');
+const map1 = Immutable.Map({ a: 1, b: 2, c: 3 });
 const express = require('express')
 const bodyParser = require('body-parser')
 const fetch = require('node-fetch')
