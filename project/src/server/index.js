@@ -26,7 +26,7 @@ app.get('/curiositypictures', async (req, res) => {
         //fetch the picture(s) from the last available date
         let image = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=${maxdate}&api_key=${process.env.API_KEY}`)
             .then(res => res.json())
-        res.send({image})
+        res.send(Immutable.Map({image}))
     } catch (err) {
         console.log('error:', err);
     }
@@ -42,7 +42,7 @@ app.get('/spiritpictures', async (req, res) => {
         //fetch the picture(s) from the last available date
         let image = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos?earth_date=${maxdate}&api_key=${process.env.API_KEY}`)
             .then(res => res.json())
-        res.send({image})
+        res.send(Immutable.Map({image}))
     } catch (err) {
         console.log('error:', err);
     }
@@ -58,7 +58,7 @@ app.get('/opportunitypictures', async (req, res) => {
         //fetch the picture(s) from the last available date
         let image = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos?earth_date=${maxdate}&api_key=${process.env.API_KEY}`)
             .then(res => res.json())
-        res.send({image})
+        res.send(Immutable.Map({image}))
     } catch (err) {
         console.log('error:', err);
     }
