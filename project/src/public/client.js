@@ -1,6 +1,5 @@
-// store object that can only be modified using updateStore
-let store = { 
-}
+// store object that can be modified using updateStore
+let store = new Object()
 
 //this function grabs the image data for the current chosen rover. Gets called when user submits a rover choice
 const getImage = (state) => {
@@ -26,11 +25,12 @@ window.addEventListener('load', function() {
             updateStore(store, {currentRover: roverChoice.value})
             getImage(store)
             })
-     });
+        }
+     );
     
 })
 
-// this HOF is used to update the store object
+// this is a higher order function, used to update the store object
 const updateStore = (store, newState) => {
     store = Object.assign(store, newState)
     render(root, store)
@@ -45,22 +45,29 @@ const render = async (root, state) => {
 
 }
 
-// Pure function that returns conditional information in the form of an html module 
-const RoverInfo = () => {
-    //the function starts with an if statement to check if an image is already in place
-    if (!store.image) {
-        return (`
-            <p></p>
-        `)
+const roverData = () => {
+    if (store.image){
+        const roverLocation = store.image.image.photos[0]
+        const properties = {
+        name: (`<p>Name: ${roverLocation.rover.name}</p>`),
+        launch_date: (`<p>Launch date: ${roverLocation.rover.launch_date}</p>`),
+        landing_date: (`<p>Landing date: ${roverLocation.rover.landing_date}</p>`), 
+        mission_status: (`<p>Mission status: ${roverLocation.rover.status}</p>`),
+        latest_picture_date: (`<p>Date of latest picture: ${roverLocation.earth_date}</p>`),
+        camera: (`<p>Camera: ${roverLocation.camera.full_name}</p>`),
+        latest_picture: (`<p>Latest picture: </p><img src='${store.image.image.photos[0].img_src}' max-width:100%; height:auto />`)
+        }
+        return Object.values(properties).join('')
+    }
+}
+
+//higher order function that displays information only if a given store item exists
+const displayInfo = (info, storeItem) => {
+    if(storeItem) {
+        return info
     }
     return (`
-        <p>Name: ${store.image.image.photos[0].rover.name}</p>
-        <p>Launch date: ${store.image.image.photos[0].rover.launch_date}</p>
-        <p>Landing date: ${store.image.image.photos[0].rover.landing_date}</p>
-        <p>Mission status: ${store.image.image.photos[0].rover.status}</p>
-        <p>Latest picture taken with the ${store.image.image.photos[0].camera.full_name}. Date: ${store.image.image.photos[0].earth_date}</p>
-        <img src='${store.image.image.photos[0].img_src}' max-width:100%; height:auto />
-        
+    <p></p>
     `)
 }
 
@@ -71,7 +78,6 @@ const App = () => {
         <header></header> 
         <main>
             <h1>Mars Rover Dashboard</h1>
-            <p>Choose a rover</p>
                 <select id='roverChoice'>
                 <option disabled selected value> -- Choose a rover -- </option>
                 <option>Curiosity</option>
@@ -79,7 +85,7 @@ const App = () => {
                 <option>Spirit</option>
                 <input id='submit' type='submit' value='Get information'>
                 </select>
-            ${RoverInfo()}
+            ${displayInfo(roverData(), store.image)}
         </main>
         <footer></footer>
     `)
