@@ -1,4 +1,7 @@
 //required stuff to run server
+const Rx = require('rxjs/Rx');
+
+Rx.Observable.of(1,2,3)
 require('dotenv').config()
 const Immutable = require('immutable');
 const map1 = Immutable.Map({ a: 1, b: 2, c: 3 });
