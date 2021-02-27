@@ -1,92 +1,96 @@
-// store object that can be modified using updateStore
-let store = new Object()
-
-//this function grabs the image data for the current chosen rover. Gets called when user submits a rover choice
-const getImage = (state) => {
-    //if no rover has been chosen yet, function stops
-    if (!store.currentRover) {
-        return 
-    }
-    //else, it will return the image data and put it in the store
-    const { image } = state
-    fetch(`http://localhost:3000/${store.currentRover}pictures`)
-        .then(res => res.json())
-        .then(image => updateStore(store, { image }))
-    return this.data
+let store = {
+    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
 }
 
-// listening for load event because page should load before any JS is called
-window.addEventListener('load', function() {
-    //once the page is loaded, the render function is called
-    render(root, store)  
-   //and an event listener for the submit button is created
-    root.addEventListener('click', function() {
-        submit.addEventListener('click', function(){
-            updateStore(store, {currentRover: roverChoice.value})
-            getImage(store)
-            })
-        }
-     );
-    
-})
+//root is the ID of the HTML element where content will go
+const root = document.getElementById('root')
 
-// this is a higher order function, used to update the store object
+// roverForm is the ID os the dropdown menu to choose a rover
+const roverForm = () => {
+    if (document.getElementById("roverDropDown")) return document.getElementById("roverDropDown")
+    else return "root"
+}
+
+// updateStore is the only function that changes the values of the store object. It then renders the content
 const updateStore = (store, newState) => {
     store = Object.assign(store, newState)
     render(root, store)
 }
 
-// root is where content goes in the html
-const root = document.getElementById('root')
-
-// render sets App as the innerhtml of root
+//render puts content inside the root html element
 const render = async (root, state) => {
     root.innerHTML = App(state)
-
-}
-
-const roverData = () => {
-    if (store.image){
-        const roverLocation = store.image.image.photos[0]
-        const properties = {
-        name: (`<p>Name: ${roverLocation.rover.name}</p>`),
-        launch_date: (`<p>Launch date: ${roverLocation.rover.launch_date}</p>`),
-        landing_date: (`<p>Landing date: ${roverLocation.rover.landing_date}</p>`), 
-        mission_status: (`<p>Mission status: ${roverLocation.rover.status}</p>`),
-        latest_picture_date: (`<p>Date of latest picture: ${roverLocation.earth_date}</p>`),
-        camera: (`<p>Camera: ${roverLocation.camera.full_name}</p>`),
-        latest_picture: (`<p>Latest picture: </p><img src='${store.image.image.photos[0].img_src}' max-width:100%; height:auto />`)
-        }
-        return Object.values(properties).join('')
-    }
-}
-
-//higher order function that displays information only if a given store item exists
-const displayInfo = (info, storeItem) => {
-    if(storeItem) {
-        return info
-    }
-    return (`
-    <p></p>
-    `)
 }
 
 // create content
-const App = () => {
+const App = (state) => {
+    let { rovers } = state
 
-    return (`
-        <header></header> 
+    return `
+        <header></header>
         <main>
-            <h1>Mars Rover Dashboard</h1>
-                <select id='roverChoice'>
-                <option disabled selected value> -- Choose a rover -- </option>
-                <option>Curiosity</option>
-                <option>Opportunity</option>
-                <option>Spirit</option>
-                <input id='submit' type='submit' value='Get information'>
-                </select>
-            ${displayInfo(roverData(), store.image)}
+            <h1>Mars dashboard</h1>
+            <section>
+                ${roverDropDown(DropDown)}
+                ${roverInfo(rovers)}
+            </section>
         </main>
         <footer></footer>
-    `)
+    `
+}
+
+// listening for load event because page should load before any JS is called
+window.addEventListener('load', () => {
+    render(root, store) 
+})
+
+//listening for form changes to grab the chosen rovers api
+root.addEventListener('change', () => {
+    getRoverApi(store, roverForm().value)
+})
+
+// If there is a chosen rover in store, show the rover information, else show "choose a rover" message
+const roverInfo = (rovers) => {
+    if (Array.isArray(store.rovers)) {
+        return `
+            <h1>Choose a rover!</h1>
+        `
+    }
+
+    else {
+    
+        return `
+        <h1>${rovers.image.photos[0].rover.name} rover</h1>
+        <p>Launch date: ${rovers.image.photos[0].rover.launch_date}</p>
+        <p>Landing date: ${rovers.image.photos[0].rover.landing_date}</p>
+        <p>Mission status: ${rovers.image.photos[0].rover.status}</p>
+        <img src="${rovers.image.photos[0].img_src}" max-width:100%; height:auto />
+    `}
+}
+
+// the DropDown function allows us to create a custom dropdown menu
+const DropDown = (option1, option2, option3, buttonId, prompt) => {
+    return `
+        <select id='${buttonId}'>
+        <option disabled selected value> -- ${prompt} -- </option>
+        <option>${option1}</option>
+        <option>${option2}</option>
+        <option>${option3}</option>
+        </select>
+    `
+}
+
+// the roverDropDown function is a high order function that returns a custom dropdown using the DropDown function
+const roverDropDown = (callback) => {
+    return callback("curiosity", "opportunity", "spirit", "roverDropDown", "choose a rover")
+}
+
+//api call 
+const getRoverApi = (state, rover) => {
+    let { rovers } = state
+    fetch(`http://localhost:3000/${rover}`)
+        .then(res => res.json())
+        .then(rovers => updateStore(store, { rovers }))
+
+    return this.data
 }
