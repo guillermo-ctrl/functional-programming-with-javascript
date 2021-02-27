@@ -62,4 +62,21 @@ app.get('/opportunity', async (req, res) => {
     }
 })
 
+// perseverance latest pictures API call 
+app.get('/perseverance', async (req, res) => {
+    // Prepare output in JSON format
+    try {
+        //check what the date of the last picture is
+        const maxdate = (await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers?api_key=${process.env.API_KEY}`)
+            .then(res => res.json())).rovers[3].max_date
+    
+        //fetch the picture(s) from the last available date
+        let image = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/perseverance/photos?earth_date=${maxdate}&api_key=${process.env.API_KEY}`)
+            .then(res => res.json())
+        res.send(Immutable.Map({image}))
+    } catch (err) {
+        console.log('error:', err);
+    }
+})
+
 app.listen(port, () => console.log(`Rover dashboard listening on port ${port}!`))
