@@ -53,36 +53,49 @@ root.addEventListener('change', () => {
 const roverInfo = (rovers) => {
     if (Array.isArray(store.rovers)) {
         return `
-            <h1>Choose a rover!</h1>
+            <p>Choose a rover!</p>
         `
     }
 
     else {
+        const latestImages = () => {
+            let arr = []
+            rovers.image.photos.forEach((element, index) => {
+                arr.push(`
+                <img src="${rovers.image.photos[index].img_src}" max-width:100%; height:auto />
+                <figcaption>Taken with the ${rovers.image.photos[index].camera.full_name}</figcaption>
+                `)
+            });
+            return (arr)
+        }
     
-        return `
+        return (`
         <h1>${rovers.image.photos[0].rover.name} rover</h1>
         <p>Launch date: ${rovers.image.photos[0].rover.launch_date}</p>
         <p>Landing date: ${rovers.image.photos[0].rover.landing_date}</p>
         <p>Mission status: ${rovers.image.photos[0].rover.status}</p>
-        <img src="${rovers.image.photos[0].img_src}" max-width:100%; height:auto />
-    `}
+        <p>Date of latest pictures: ${rovers.image.photos[0].earth_date}</p>
+        ${latestImages()}
+        
+    `)}
 }
 
 // the DropDown function allows us to create a custom dropdown menu
-const DropDown = (option1, option2, option3, buttonId, prompt) => {
+const DropDown = (option1, option2, option3, option4, buttonId, prompt) => {
     return `
         <select id='${buttonId}'>
         <option disabled selected value> -- ${prompt} -- </option>
         <option>${option1}</option>
         <option>${option2}</option>
         <option>${option3}</option>
+        <option>${option4}</option>
         </select>
     `
 }
 
 // the roverDropDown function is a high order function that returns a custom dropdown using the DropDown function
 const roverDropDown = (callback) => {
-    return callback("curiosity", "opportunity", "spirit", "roverDropDown", "choose a rover")
+    return callback("curiosity", "opportunity", "spirit", "perseverance", "roverDropDown", "choose a rover")
 }
 
 //api call 
