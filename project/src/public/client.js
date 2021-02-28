@@ -54,21 +54,13 @@ root.addEventListener('change', () => {
 
 // If there is a chosen rover in store, show the rover information, else show 'choose a rover' message
 const roverInfo = (rovers) => {
-    if (Array.isArray(store.rovers)) {
+    if (Array.isArray(rovers)) {
         return `
             <p>Choose a rover!</p>
         `
     } else {
         const latestImages = () => {
-            let arr = []
-            let cams = []
-            rovers.image.photos.forEach((element, index) => {
-                cams.push(rovers.image.photos[index].camera.full_name)
-                arr.push(`
-                    <img src='${rovers.image.photos[index].img_src}' max-width:100%; height:auto />
-                    <figcaption>Taken with the ${rovers.image.photos[index].camera.full_name}</figcaption>
-                `)
-            });
+
             const filtered = rovers.image.photos.filter((x, y, z) => {
                 if (y > 0) return x.camera.full_name != z[y - 1].camera.full_name
                 else return x = x
@@ -108,7 +100,7 @@ const DropDown = (option1, option2, option3, option4, buttonId, prompt) => {
     `
 }
 
-// the roverDropDown function is a high order function that returns a custom dropdown using the DropDown function
+// the roverDropDown function is a higher order function that returns a custom dropdown using the DropDown function
 const roverDropDown = (callback) => {
     return callback('curiosity', 'opportunity', 'spirit', 'perseverance', 'roverDropDown', 'choose a rover')
 }
