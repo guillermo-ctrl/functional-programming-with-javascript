@@ -30,15 +30,30 @@ const App = (state) => {
     } = state
 
     return `
-        <header></header>
         <main>
-            <h1>Mars dashboard</h1>
-            <section>
-                ${roverDropDown(DropDown)}
-                ${roverInfo(rovers)}
-            </section>
+            <div class="sidebar pure-u-1 pure-u-md-1-4">
+                <div class="header">
+                    <h1 class="brand-title">Mars dashboard</h1>
+                    <h2 class="brand-tagline">Latest pictures <br>by NASA Rovers in Mars</h2>
+                    <br>
+                    ${roverDropDown(DropDown)}
+                </div>
+            </div>
+
+            <div class="content pure-u-1 pure-u-md-3-4">
+                
+                <img width="100" height="100" class="logo" src="https://upload.wikimedia.org/wikipedia/commons/e/e5/NASA_logo.svg">
+                    <section class="post">
+                        <div class="post-description">
+                            <p>
+                                ${roverInfo(rovers)}
+                            </p>
+                        </div>
+                    </section>        
+            </div>
+            
         </main>
-        <footer></footer>
+
     `
 }
 
@@ -56,7 +71,7 @@ root.addEventListener('change', () => {
 const roverInfo = (rovers) => {
     if (Array.isArray(rovers)) {
         return `
-            <p>Choose a rover!</p>
+            <p class="post-title">Choose a rover!</p>
         `
     } else {
         const latestImages = () => {
@@ -68,7 +83,7 @@ const roverInfo = (rovers) => {
 
             const map1 = filtered.map((x, y) => {
                 return (`
-                    <img src='${x.img_src}' max-width:100%; height:auto />
+                    <img class=pure-img-responsive src='${x.img_src}' max-width:100%; height:auto />
                     <figcaption>Taken with the ${x.camera.full_name}</figcaption>
                 `)
             });
@@ -76,12 +91,15 @@ const roverInfo = (rovers) => {
             return (map1)
         }
         return (`
-        <h1>${rovers.image.photos[0].rover.name} rover</h1>
-        <p>Launch date: ${rovers.image.photos[0].rover.launch_date}</p>
-        <p>Landing date: ${rovers.image.photos[0].rover.landing_date}</p>
-        <p>Mission status: ${rovers.image.photos[0].rover.status}</p>
-        <p>Date of latest pictures: ${rovers.image.photos[0].earth_date}</p>
-        ${latestImages()}
+        <p class="post-title">${rovers.image.photos[0].rover.name} rover</p>
+        <div class="post-description">
+            <p>Launch date: ${rovers.image.photos[0].rover.launch_date}</p>
+            <p>Landing date: ${rovers.image.photos[0].rover.landing_date}</p>
+            <p>Mission status: ${rovers.image.photos[0].rover.status}</p>
+            <p>Date of latest pictures: ${rovers.image.photos[0].earth_date}</p>
+            ${latestImages()}
+        </div>
+        
         
     `)
     }
@@ -91,7 +109,7 @@ const roverInfo = (rovers) => {
 const DropDown = (option1, option2, option3, option4, buttonId, prompt) => {
     return `
         <select id='${buttonId}'>
-        <option disabled selected value> -- ${prompt} -- </option>
+        <option disabled selected value>${prompt}</option>
         <option>${option4}</option>
         <option>${option1}</option>
         <option>${option2}</option>
@@ -102,7 +120,7 @@ const DropDown = (option1, option2, option3, option4, buttonId, prompt) => {
 
 // the roverDropDown function is a higher order function that returns a custom dropdown using the DropDown function
 const roverDropDown = (callback) => {
-    return callback('curiosity', 'opportunity', 'spirit', 'perseverance', 'roverDropDown', 'choose a rover')
+    return callback('curiosity', 'opportunity', 'spirit', 'perseverance', 'roverDropDown', 'Choose a rover')
 }
 
 //api call 
